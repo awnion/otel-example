@@ -1,12 +1,9 @@
 .DEFAULT_GOAL := help
 
-help:
-	@echo "Usage: make [target]"
-	@echo ""
-	@echo "Available targets:"
-	@awk '/^[a-zA-Z\-\_0-9]+:/ { \
-		print "  " $$1 \
-	}' $(MAKEFILE_LIST) | column -t -s ':'
+help:  ## Display this help
+	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m\033[0m\n"} \
+		/^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } \
+		/^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
 run-services: ## Run docker services
 	cd otel && docker compose up -d --remove-orphans
